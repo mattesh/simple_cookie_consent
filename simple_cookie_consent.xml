@@ -7,7 +7,7 @@
 	<license>GNU General Public License version 2 or later</license>
 	<authorEmail>mattes_h@gmx.net</authorEmail>
 	<authorUrl>www.github.com</authorUrl>
-	<version>2.0.1</version>
+	<version>2.0.2</version>
 	<description>PLG_SYSTEM_SIMPLE_COOKIE_CONSENT_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="simple_cookie_consent">simple_cookie_consent.php</filename>
@@ -17,6 +17,8 @@
 	<languages>
 		<language tag="en-GB">en-GB.plg_system_simple_cookie_consent.ini</language>
 		<language tag="en-GB">en-GB.plg_system_simple_cookie_consent.sys.ini</language>
+		<language tag="de-DE">de-DE.plg_system_simple_cookie_consent.ini</language>
+		<language tag="de-DE">de-DE.plg_system_simple_cookie_consent.sys.ini</language>
 	</languages>
 	<config>
 		<fields name="params">
