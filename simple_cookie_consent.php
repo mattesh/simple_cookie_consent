@@ -7,87 +7,73 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\HTML\HTMLHelper;
 
-class PlgSystemSimple_cookie_consent extends JPlugin
+class PlgSystemSimple_cookie_consent extends CMSPlugin
 {
-
-    private $_insert_html = "0";
+    protected $_insert_html = "0";
 
     /**
-     * Constructor
+     * Whether to load the plugin language files automatically
      *
-     * @param object  &$subject The object to observe
-     * @param array $config An array that holds the plugin configuration
-     *
-     * @since   3.9.0
+     * @var    boolean
+     * @since  3.9
      */
-    public function __construct(&$subject, $config)
+    protected $autoloadLanguage = true;
+
+    public function onAfterInitialise(): void
     {
-        parent::__construct($subject, $config);
-
-    }
-
-
-    public function onAfterInitialise()
-    {
-        $app = JFactory::getApplication();
+        $app = Factory::getApplication();
 
         if ($app->isClient('site')) {
-            try{
+            try {
                 $simple_jquery = $this->params->get('simple_jquery', "");
-                if ($simple_jquery == 'yes') {
-                    JHtml::_('jquery.framework');
+                if ($simple_jquery === 'yes') {
+                    HTMLHelper::_('jquery.framework');
                 }
 
-                $pluginUrl = JURI::base(true) . '/plugins/system/simple_cookie_consent/';
+                $pluginUrl = Uri::base(true) . '/plugins/system/simple_cookie_consent/';
                 $js = $pluginUrl . 'html.js';
                 $css = $pluginUrl . 'html.css';
 
                 $link = '<script src="' . $js . '" type="text/javascript"></script>' . "\n";
                 $link .= '<link rel="stylesheet" href="' . $css . '" />' . "\n";
 
-                $document = JFactory::getDocument();
-                $document->addCustomTag($link);
-
-                $this->_insert_html="1";
-
-            }catch(Exception $e)
-            {
-                $this->_insert_html="0";
+                $document = Factory::getDocument();
+                if (method_exists($document, 'addCustomTag')) {
+                    $document->addCustomTag($link);
+                }
+                $this->_insert_html = "1";
+            } catch (\Exception $e) {
+                $this->_insert_html = "0";
             }
         }
     }
 
-
-    public function onAfterRender()
+    public function onAfterRender(): void
     {
-
-        $app = JFactory::getApplication();
+        $app = Factory::getApplication();
 
         // only insert the script in the frontend
         if ($app->isClient('site')) {
-
-            // retrieve all the response as an html string
-
-            if ($this->_insert_html == "1") {
+            if ($this->_insert_html === "1") {
                 $simple_gdpr_cookie_text = $this->params->get('simple_gdpr_cookie_text', "");
                 $simple_gdpr_cookie_btn_text = $this->params->get('simple_gdpr_cookie_btn_text', "");
 
-
-                if ($simple_gdpr_cookie_text != '') {
+                if ($simple_gdpr_cookie_text !== '') {
                     $html_site = $app->getBody();
 
-
-                    $pluginUrl = JURI::base(true) . '/plugins/system/simple_cookie_consent/';
+                    $pluginUrl = Uri::base(true) . '/plugins/system/simple_cookie_consent/';
                     $js = $pluginUrl . 'simple_gdpr/html.js';
                     $css = $pluginUrl . 'simple_gdpr/html.css';
 
+                    HTMLHelper::_('script', $js, ['version' => 'auto', 'relative' => true]);
+                    HTMLHelper::_('stylesheet', $css, ['version' => 'auto', 'relative' => true]);
 
-                    JHtml::_('script', $js, array('version' => 'auto', 'relative' => true));
-                    JHtml::_('stylesheet', $css, array('version' => 'auto', 'relative' => true));
-
-
-                    $simple_gdpr_cookie_text = str_replace(array('&lt;', '&gt;', '&quot;'), array('<', '>', '"'), $simple_gdpr_cookie_text);
+                    $simple_gdpr_cookie_text = str_replace(['&lt;', '&gt;', '&quot;'], ['<', '>', '"'], $simple_gdpr_cookie_text);
 
                     $html = '<div id="simpletools_nl_cookie_notice"  class="cn-bottom bootstrap" aria-label="Cookie Notice">
   <div class="simpletools_nl_cookie_notice-container">
@@ -99,21 +85,15 @@ class PlgSystemSimple_cookie_consent extends JPlugin
   </div>
 </div>';
 
-
                     $html = str_replace('{SIMPLE_TOOLS_NL_GDPR_COOKIE_TEXT}', $simple_gdpr_cookie_text, $html);
                     $html = str_replace('{SIMPLE_TOOLS_NL_GDPR_COOKIE_BUTTON_TEXT}', $simple_gdpr_cookie_btn_text, $html);
-
 
                     $html_site = str_replace('</body>', $html . '</body>', $html_site);
 
                     // override the original response
                     $app->setBody($html_site);
-
                 }
             }
-
-
-
         }
     }
 }
