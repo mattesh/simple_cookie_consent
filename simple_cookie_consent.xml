@@ -7,7 +7,7 @@
 	<license>GNU General Public License version 2 or later</license>
 	<authorEmail>mattes_h@gmx.net</authorEmail>
 	<authorUrl>www.github.com</authorUrl>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<description>PLG_SYSTEM_SIMPLE_COOKIE_CONSENT_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="simple_cookie_consent">simple_cookie_consent.php</filename>
@@ -45,4 +45,7 @@
 			</fieldset>
 		</fields>
 	</config>
+	<updateservers>
+		<server type="extension" priority="1" name="SIMPLE_COOKIE_CONSENT">https://raw.githubusercontent.com/mattesh/simple_cookie_consent/refs/heads/updates/simple_cookie_consent.xml</server>
+	</updateservers>
 </extension>
